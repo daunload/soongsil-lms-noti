@@ -19,33 +19,21 @@ export async function login(): Promise<CanvasCookie[]> {
   const page = await context.newPage();
 
   try {
-    // Navigate to Canvas — redirects to LMS SSO login page
+    // Navigate to Canvas — redirects to LMS SSO selection page
     await page.goto('https://canvas.ssu.ac.kr', { waitUntil: 'networkidle' });
 
-    // Verify we landed on the SSO login page
-    const currentUrl = page.url();
-    if (!currentUrl.includes('xn-sso/login.php')) {
-      throw new Error(`Expected SSO login page, but landed on: ${currentUrl}`);
-    }
+    // Click "일반 로그인" to reach the username/password form
+    await page.click('a[href*="login-general.php"]');
+    await page.waitForLoadState('networkidle');
 
-    // Fill in student ID — try common selector variants
-    const idSelector = await resolveSelector(page, ['#userid', '#id', 'input[name="userid"]', 'input[name="id"]']);
-    if (!idSelector) {
-      throw new Error('Could not find username/ID input field on SSO login page');
-    }
-    await page.fill(idSelector, userId);
+    // Fill in student ID and password
+    await page.fill('input[placeholder="ID"]', userId);
+    await page.fill('input[placeholder="Password"]', userPw);
 
-    // Fill in password — try common selector variants
-    const pwSelector = await resolveSelector(page, ['#pwd', '#password', 'input[name="pwd"]', 'input[name="password"]']);
-    if (!pwSelector) {
-      throw new Error('Could not find password input field on SSO login page');
-    }
-    await page.fill(pwSelector, userPw);
-
-    // Submit the login form
+    // Submit — click the 로그인 link which calls OnLogon()
     await Promise.all([
-      page.waitForURL('**/lms.ssu.ac.kr/**', { waitUntil: 'networkidle', timeout: 30000 }),
-      page.keyboard.press('Enter'),
+      page.waitForLoadState('networkidle'),
+      page.click('a[href="javascript:OnLogon();"]'),
     ]);
 
     // Confirm we are back on LMS
