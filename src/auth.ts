@@ -72,20 +72,3 @@ export async function login(): Promise<CanvasCookie[]> {
     await browser.close();
   }
 }
-
-/**
- * Returns the first selector from the list that matches a visible element on
- * the page, or null if none match.
- */
-async function resolveSelector(
-  page: import('playwright').Page,
-  selectors: string[]
-): Promise<string | null> {
-  for (const selector of selectors) {
-    const el = page.locator(selector).first();
-    if (await el.isVisible().catch(() => false)) {
-      return selector;
-    }
-  }
-  return null;
-}
