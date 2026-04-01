@@ -131,7 +131,7 @@ export function buildHtml(items: UncompletedItems, date: Date): string {
   if (items.announcements.length > 0) {
     html += `    <h3>📢 공지 (${items.announcements.length}개, 최근 7일)</h3>\n    <ul>\n`;
     for (const announcement of items.announcements) {
-      const announcementDate = formatDate(announcement.postedAt);
+      const announcementDate = formatDateTime(announcement.postedAt);
       html += `      <li>[${announcement.courseName}] ${announcement.title} — ${announcementDate} ${announcement.author}</li>\n`;
     }
     html += `    </ul>\n`;
@@ -243,12 +243,13 @@ function formatQuizItem(quiz: {
 }
 
 /**
- * Format date as M/D (e.g., "4/1")
+ * Format date as YYYY-MM-DD (e.g., "2026-04-01") — used for subject/headers
  */
 function formatDate(date: Date): string {
-  const month = date.getMonth() + 1;
-  const day = date.getDate();
-  return `${month}/${day}`;
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 }
 
 /**
