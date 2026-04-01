@@ -46,7 +46,7 @@ export async function login(): Promise<CanvasCookie[]> {
 
     // Submit the login form
     await Promise.all([
-      page.waitForNavigation({ waitUntil: 'networkidle', timeout: 30000 }),
+      page.waitForURL('**/canvas.ssu.ac.kr/**', { waitUntil: 'networkidle', timeout: 30000 }),
       page.keyboard.press('Enter'),
     ]);
 
