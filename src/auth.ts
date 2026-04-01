@@ -19,14 +19,14 @@ export async function login(): Promise<CanvasCookie[]> {
   const page = await context.newPage();
 
   try {
-    // Navigate to Canvas — this will redirect to the SSO login page
-    await page.goto('https://canvas.ssu.ac.kr', { waitUntil: 'networkidle' });
+    // Navigate to LMS — this will redirect to the SSO login page
+    await page.goto('https://lms.ssu.ac.kr', { waitUntil: 'networkidle' });
 
     // Verify we were redirected to the SSO login page
     const currentUrl = page.url();
-    if (!currentUrl.includes('sso.ssu.ac.kr')) {
+    if (!currentUrl.includes('lms.ssu.ac.kr/xn-sso/login.php')) {
       throw new Error(
-        `Expected redirect to SSO login page (sso.ssu.ac.kr), but landed on: ${currentUrl}`
+        `Expected redirect to SSO login page, but landed on: ${currentUrl}`
       );
     }
 
@@ -46,15 +46,15 @@ export async function login(): Promise<CanvasCookie[]> {
 
     // Submit the login form
     await Promise.all([
-      page.waitForURL('**/canvas.ssu.ac.kr/**', { waitUntil: 'networkidle', timeout: 30000 }),
+      page.waitForURL('**/lms.ssu.ac.kr/**', { waitUntil: 'networkidle', timeout: 30000 }),
       page.keyboard.press('Enter'),
     ]);
 
-    // Confirm we are back on Canvas
+    // Confirm we are back on LMS
     const postLoginUrl = page.url();
-    if (!postLoginUrl.includes('canvas.ssu.ac.kr')) {
+    if (!postLoginUrl.includes('lms.ssu.ac.kr')) {
       throw new Error(
-        `Login may have failed — expected redirect to canvas.ssu.ac.kr, but landed on: ${postLoginUrl}`
+        `Login may have failed — expected redirect to lms.ssu.ac.kr, but landed on: ${postLoginUrl}`
       );
     }
 

@@ -9,7 +9,7 @@ import type {
   Announcement
 } from './types.js';
 
-const BASE = 'https://canvas.ssu.ac.kr';
+const BASE = 'https://lms.ssu.ac.kr';
 
 // Convert CanvasCookie[] to Cookie header string
 function cookieHeader(cookies: CanvasCookie[]): string {
