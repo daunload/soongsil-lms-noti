@@ -86,6 +86,8 @@ export function filterVideos(modules: Module[], course: Course): VideoItem[] {
         ? Math.ceil(item.content_data.duration / 60)
         : undefined;
 
+      const hoursUntilDue = dueAt ? (dueAt.getTime() - now.getTime()) / 3600000 : null;
+
       result.push({
         courseId: course.id,
         courseName: course.shortName,
@@ -94,6 +96,8 @@ export function filterVideos(modules: Module[], course: Course): VideoItem[] {
         itemId: item.module_item_id,
         title: item.title,
         durationMinutes,
+        dueAt,
+        hoursUntilDue,
         completed: false,
       });
     }

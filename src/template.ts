@@ -177,18 +177,25 @@ function formatVideoItem(video: {
   courseName: string;
   title: string;
   durationMinutes?: number;
-  completed: boolean | 'unknown';
+  dueAt: Date | null;
+  hoursUntilDue: number | null;
 }): string {
   let content = `[${video.courseName}] ${video.title}`;
 
-  // Add duration if available
   if (video.durationMinutes) {
     content += ` (${video.durationMinutes}분)`;
   }
 
-  // Add completion status if unknown
-  if (video.completed === 'unknown') {
-    content += ' — 알 수 없음';
+  if (video.dueAt) {
+    const h = video.hoursUntilDue!;
+    const dueStr = formatDateTime(video.dueAt);
+    if (h <= 24) {
+      return `      <li><span class="urgent">🚨 ${content} — 마감 ${dueStr} <strong>(${h <= 1 ? '오늘!' : `${Math.ceil(h)}시간 후`})</strong></span></li>\n`;
+    } else if (h <= 72) {
+      return `      <li><span class="warning">⚠️ ${content} — 마감 ${dueStr} (${Math.ceil(h / 24)}일 후)</span></li>\n`;
+    } else {
+      content += ` — 마감 ${dueStr}`;
+    }
   }
 
   return `      <li>${content}</li>\n`;

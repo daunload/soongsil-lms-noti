@@ -58,6 +58,8 @@ export interface VideoItem {
   itemId: number;
   title: string;
   durationMinutes?: number;
+  dueAt: Date | null;
+  hoursUntilDue: number | null;
   completed: false;
 }
 
