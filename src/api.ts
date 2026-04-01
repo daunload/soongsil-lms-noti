@@ -17,12 +17,18 @@ function cookieHeader(cookies: CanvasCookie[]): string {
 }
 
 // Generic fetch helper — throws on non-2xx
+// Strips Canvas's while(1); CSRF prefix before parsing JSON
 async function apiFetch<T>(url: string, cookies: CanvasCookie[]): Promise<T> {
   const res = await fetch(url, {
-    headers: { Cookie: cookieHeader(cookies) }
+    headers: {
+      Cookie: cookieHeader(cookies),
+      Accept: 'application/json',
+    }
   });
   if (!res.ok) throw new Error(`API error ${res.status}: ${url}`);
-  return res.json() as Promise<T>;
+  const text = await res.text();
+  const json = text.startsWith('while(1);') ? text.slice('while(1);'.length) : text;
+  return JSON.parse(json) as T;
 }
 
 // GET /api/v1/dashboard/dashboard_cards → Course[]
@@ -67,13 +73,15 @@ export async function getQuizSubmission(
 ): Promise<QuizSubmission | null> {
   const url = `${BASE}/api/v1/courses/${courseId}/quizzes/${quizId}/submission`;
   const res = await fetch(url, {
-    headers: { Cookie: cookieHeader(cookies) }
+    headers: { Cookie: cookieHeader(cookies), Accept: 'application/json' }
   });
   if (!res.ok) {
     if (res.status === 404) return null;
     throw new Error(`API error ${res.status}: ${url}`);
   }
-  const data = (await res.json()) as { quiz_submissions: QuizSubmission[] };
+  const text = await res.text();
+  const json = text.startsWith('while(1);') ? text.slice('while(1);'.length) : text;
+  const data = JSON.parse(json) as { quiz_submissions: QuizSubmission[] };
   return data.quiz_submissions?.[0] ?? null;
 }
 
