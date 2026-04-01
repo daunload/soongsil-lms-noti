@@ -1,0 +1,34 @@
+name: Deadline Alert
+
+on:
+  schedule:
+    - cron: '0 0,6,12,18 * * *'   # Every 6 hours
+  workflow_dispatch:                 # Allow manual trigger
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install chromium --with-deps
+
+      - name: Run deadline alert
+        run: npx tsx src/index.ts --mode=deadline
+        env:
+          SSU_ID: ${{ secrets.SSU_ID }}
+          SSU_PW: ${{ secrets.SSU_PW }}
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PW: ${{ secrets.GMAIL_APP_PW }}
+          NOTIFY_EMAIL: ${{ secrets.NOTIFY_EMAIL }}
