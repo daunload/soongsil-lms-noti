@@ -106,8 +106,9 @@ async function main(): Promise<void> {
   }
 
   // Step 6: Build and send email
-  const subject = buildSubject(mode, aggregated);
-  const html = buildHtml(mode, aggregated);
+  const now = new Date();
+  const subject = buildSubject(aggregated, now);
+  const html = buildHtml(aggregated, now);
 
   console.log('[index] Sending email...');
   await sendEmail(subject, html);
