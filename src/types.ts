@@ -27,24 +27,24 @@ export interface Assignment {
   };
 }
 
-// Module item (video) from /learningx/api/v1/courses/{id}/modules?include_detail=true
+// Module item from /learningx/api/v1/courses/{id}/modules?include_detail=true
 export interface ModuleItem {
-  id: number;
+  module_item_id: number;
   title: string;
-  type: string; // 'Video', 'ExternalUrl', etc.
-  completion_requirement?: {
-    type: string;
-    completed: boolean;
-  };
-  content_details?: {
-    time_limit?: number; // minutes
+  content_type: string; // 'attendance_item', etc.
+  completed: boolean | null;
+  content_data?: {
+    duration?: number;           // seconds
+    item_content_type?: string;  // 'commons' for video
+    due_at?: string | null;
+    omit_progress?: boolean;
   };
 }
 
 export interface Module {
-  id: number;
-  name: string;
-  items: ModuleItem[];
+  module_id: number;
+  title: string;
+  module_items: ModuleItem[];
 }
 
 // Video item (uncompleted)

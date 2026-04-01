@@ -64,30 +64,29 @@ export function filterVideos(modules: Module[], course: Course): VideoItem[] {
   const result: VideoItem[] = [];
 
   for (const mod of modules) {
-    for (const item of mod.items) {
-      const req = item.completion_requirement;
-
-      // Skip items with no completion requirement — they are not required
-      if (req === undefined) {
-        continue;
-      }
+    for (const item of mod.module_items) {
+      // Skip items with omit_progress — not tracked
+      if (item.content_data?.omit_progress) continue;
 
       // completed === true means the student finished it — skip
-      if (req.completed === true) {
-        continue;
-      }
+      if (item.completed === true) continue;
 
       const completed: boolean | 'unknown' =
-        req.completed === undefined ? 'unknown' : req.completed;
+        item.completed === null || item.completed === undefined ? 'unknown' : item.completed;
+
+      // Duration: content_data.duration is in seconds → convert to minutes
+      const durationMinutes = item.content_data?.duration
+        ? Math.ceil(item.content_data.duration / 60)
+        : undefined;
 
       result.push({
         courseId: course.id,
         courseName: course.shortName,
-        moduleId: mod.id,
-        moduleName: mod.name,
-        itemId: item.id,
+        moduleId: mod.module_id,
+        moduleName: mod.title,
+        itemId: item.module_item_id,
         title: item.title,
-        durationMinutes: item.content_details?.time_limit,
+        durationMinutes,
         completed,
       });
     }
