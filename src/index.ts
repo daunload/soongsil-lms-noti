@@ -1,3 +1,6 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import { login } from './auth.js';
 import {
   getCourses,
