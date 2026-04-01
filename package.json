@@ -8,14 +8,16 @@
     "start:deadline": "tsx src/index.ts --mode=deadline"
   },
   "dependencies": {
-    "playwright": "latest",
-    "nodemailer": "latest"
+    "dotenv": "^17.3.1",
+    "nodemailer": "latest",
+    "playwright": "latest"
   },
   "devDependencies": {
-    "typescript": "latest",
+    "@types/dotenv": "^8.2.3",
+    "@types/node": "^25.5.0",
+    "@types/nodemailer": "latest",
     "tsx": "latest",
-    "@types/node": "latest",
-    "@types/nodemailer": "latest"
+    "typescript": "latest"
   },
   "engines": {
     "node": ">=20"

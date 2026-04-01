@@ -1,33 +1,37 @@
 import nodemailer from 'nodemailer';
+import dotenv from 'dotenv';
+dotenv.config();
 
-// Send an HTML email via Gmail SMTP
-// Reads GMAIL_USER, GMAIL_APP_PW, NOTIFY_EMAIL from process.env
-// Throws if any env var is missing
+const smtpTransport = nodemailer.createTransport({
+  pool: true,
+  maxConnections: 1,
+  service: process.env.MAILSERVICE,
+  host: process.env.HOSTMAIL,
+  port: Number(process.env.MAILPORT),
+  secure: false,
+  requireTLS: true,
+  auth: {
+    user: process.env.AUTHUSER,
+    pass: process.env.AUTHPASS,
+  },
+  tls: {
+    rejectUnauthorized: false,
+  },
+});
+
 export async function sendEmail(subject: string, html: string): Promise<void> {
-  const gmailUser = process.env.GMAIL_USER;
-  const gmailAppPw = process.env.GMAIL_APP_PW;
+  const authUser = process.env.AUTHUSER;
   const notifyEmail = process.env.NOTIFY_EMAIL;
 
-  if (!gmailUser) {
-    throw new Error('Missing required environment variable: GMAIL_USER');
-  }
-  if (!gmailAppPw) {
-    throw new Error('Missing required environment variable: GMAIL_APP_PW');
-  }
-  if (!notifyEmail) {
-    throw new Error('Missing required environment variable: NOTIFY_EMAIL');
-  }
+  if (!process.env.MAILSERVICE) throw new Error('Missing env: MAILSERVICE');
+  if (!process.env.HOSTMAIL) throw new Error('Missing env: HOSTMAIL');
+  if (!process.env.MAILPORT) throw new Error('Missing env: MAILPORT');
+  if (!authUser) throw new Error('Missing env: AUTHUSER');
+  if (!process.env.AUTHPASS) throw new Error('Missing env: AUTHPASS');
+  if (!notifyEmail) throw new Error('Missing env: NOTIFY_EMAIL');
 
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: gmailUser,
-      pass: gmailAppPw,
-    },
-  });
-
-  await transporter.sendMail({
-    from: `LMS 알림 <${gmailUser}>`,
+  await smtpTransport.sendMail({
+    from: `LMS 알림 <${authUser}>`,
     to: notifyEmail,
     subject,
     html,
