@@ -30,11 +30,13 @@ export async function login(): Promise<CanvasCookie[]> {
     await page.fill('input[placeholder="직번/학번을 입력하세요"]', userId);
     await page.fill('input[placeholder="비밀번호를 입력하세요"]', userPw);
 
-    // Submit — click 로그인 button, wait until off smartid
-    await Promise.all([
-      page.waitForURL('**ssu.ac.kr/**', { waitUntil: 'networkidle', timeout: 30000 }),
-      page.click('a[href*="LoginInfoSend"]'),
-    ]);
+    // Submit — click 로그인 button, wait until redirected away from smartid
+    await page.click('a[href*="LoginInfoSend"]');
+    await page.waitForURL(
+      (url) => !url.hostname.includes('smartid.ssu.ac.kr'),
+      { timeout: 30000 }
+    );
+    await page.waitForLoadState('networkidle');
 
     // Confirm we left smartid (i.e. login succeeded)
     const postLoginUrl = page.url();
