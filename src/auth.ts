@@ -30,17 +30,17 @@ export async function login(): Promise<CanvasCookie[]> {
     await page.fill('input[placeholder="직번/학번을 입력하세요"]', userId);
     await page.fill('input[placeholder="비밀번호를 입력하세요"]', userPw);
 
-    // Submit — click 로그인 button
+    // Submit — click 로그인 button, wait until off smartid
     await Promise.all([
-      page.waitForURL('**/lms.ssu.ac.kr/**', { waitUntil: 'networkidle', timeout: 30000 }),
+      page.waitForURL('**ssu.ac.kr/**', { waitUntil: 'networkidle', timeout: 30000 }),
       page.click('a[href*="LoginInfoSend"]'),
     ]);
 
-    // Confirm we are back on LMS
+    // Confirm we left smartid (i.e. login succeeded)
     const postLoginUrl = page.url();
-    if (!postLoginUrl.includes('lms.ssu.ac.kr')) {
+    if (postLoginUrl.includes('smartid.ssu.ac.kr')) {
       throw new Error(
-        `Login may have failed — expected redirect to lms.ssu.ac.kr, but landed on: ${postLoginUrl}`
+        `Login may have failed — still on smartid.ssu.ac.kr: ${postLoginUrl}`
       );
     }
 
