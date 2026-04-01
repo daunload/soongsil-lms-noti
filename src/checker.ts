@@ -63,10 +63,20 @@ export function filterAssignments(
 export function filterVideos(modules: Module[], course: Course): VideoItem[] {
   const result: VideoItem[] = [];
 
+  const now = new Date();
+
   for (const mod of modules) {
     for (const item of mod.module_items) {
       // Skip items with omit_progress — not tracked
       if (item.content_data?.omit_progress) continue;
+
+      // Skip if viewing period hasn't started yet
+      const unlockAt = item.content_data?.unlock_at ? new Date(item.content_data.unlock_at) : null;
+      if (unlockAt && now < unlockAt) continue;
+
+      // Skip if deadline has already passed
+      const dueAt = item.content_data?.due_at ? new Date(item.content_data.due_at) : null;
+      if (dueAt && now > dueAt) continue;
 
       // completed === true means the student finished it — skip
       if (item.completed === true) continue;

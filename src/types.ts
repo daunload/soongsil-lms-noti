@@ -36,7 +36,9 @@ export interface ModuleItem {
   content_data?: {
     duration?: number;           // seconds
     item_content_type?: string;  // 'commons' for video
-    due_at?: string | null;
+    unlock_at?: string | null;   // viewing available from
+    due_at?: string | null;      // must complete by
+    lock_at?: string | null;     // locked after
     omit_progress?: boolean;
   };
 }
