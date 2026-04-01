@@ -22,18 +22,18 @@ export async function login(): Promise<CanvasCookie[]> {
     // Navigate to Canvas — redirects to LMS SSO selection page
     await page.goto('https://canvas.ssu.ac.kr', { waitUntil: 'networkidle' });
 
-    // Click "일반 로그인" to reach the username/password form
-    await page.click('a[href*="login-general.php"]');
+    // Click "통합 로그인"
+    await page.click('a[href*="smartid.ssu.ac.kr"]');
     await page.waitForLoadState('networkidle');
 
     // Fill in student ID and password
-    await page.fill('input[placeholder="ID"]', userId);
-    await page.fill('input[placeholder="Password"]', userPw);
+    await page.fill('input[placeholder="직번/학번을 입력하세요"]', userId);
+    await page.fill('input[placeholder="비밀번호를 입력하세요"]', userPw);
 
-    // Submit — click the 로그인 link which calls OnLogon()
+    // Submit — click 로그인 button
     await Promise.all([
-      page.waitForLoadState('networkidle'),
-      page.click('a[href="javascript:OnLogon();"]'),
+      page.waitForURL('**/lms.ssu.ac.kr/**', { waitUntil: 'networkidle', timeout: 30000 }),
+      page.click('a[href*="LoginInfoSend"]'),
     ]);
 
     // Confirm we are back on LMS
