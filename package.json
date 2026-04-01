@@ -1,0 +1,23 @@
+{
+  "name": "soongsil-lms-notifier",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "start:daily": "tsx src/index.ts --mode=daily",
+    "start:deadline": "tsx src/index.ts --mode=deadline"
+  },
+  "dependencies": {
+    "playwright": "latest",
+    "nodemailer": "latest"
+  },
+  "devDependencies": {
+    "typescript": "latest",
+    "tsx": "latest",
+    "@types/node": "latest",
+    "@types/nodemailer": "latest"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
