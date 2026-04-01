@@ -69,6 +69,7 @@ export function filterVideos(modules: Module[], course: Course): VideoItem[] {
     for (const item of mod.module_items) {
       // Only include attendance-tracked video items
       if (item.content_type !== 'attendance_item') continue;
+      if (!item.content_data?.use_attendance) continue;
 
       // Skip items with omit_progress — not tracked
       if (item.content_data?.omit_progress) continue;
