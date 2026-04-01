@@ -48,13 +48,16 @@ async function main(): Promise<void> {
   console.log('[index] Fetching course data in parallel...');
   const courseResults = await Promise.all(
     courses.map(async (course) => {
+      const safe = <T>(p: Promise<T[]>): Promise<T[]> =>
+        p.catch((e) => { console.warn(`[api] ${course.shortName}: ${e.message}`); return []; });
+
       const [assignments, modules, quizzes, discussionTopics, announcements] =
         await Promise.all([
-          getAssignments(cookies, course.id),
-          getModules(cookies, course.id),
-          getQuizzes(cookies, course.id),
-          getDiscussionTopics(cookies, course.id),
-          getAnnouncements(cookies, course.id),
+          safe(getAssignments(cookies, course.id)),
+          safe(getModules(cookies, course.id)),
+          safe(getQuizzes(cookies, course.id)),
+          safe(getDiscussionTopics(cookies, course.id)),
+          safe(getAnnouncements(cookies, course.id)),
         ]);
 
       // Fetch quiz submissions for each quiz
