@@ -58,7 +58,7 @@ export interface VideoItem {
   itemId: number;
   title: string;
   durationMinutes?: number;
-  completed: boolean | 'unknown';
+  completed: false;
 }
 
 // Quiz from /api/v1/courses/{id}/quizzes

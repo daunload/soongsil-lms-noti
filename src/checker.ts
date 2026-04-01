@@ -78,11 +78,8 @@ export function filterVideos(modules: Module[], course: Course): VideoItem[] {
       const dueAt = item.content_data?.due_at ? new Date(item.content_data.due_at) : null;
       if (dueAt && now > dueAt) continue;
 
-      // completed === true means the student finished it — skip
-      if (item.completed === true) continue;
-
-      const completed: boolean | 'unknown' =
-        item.completed === null || item.completed === undefined ? 'unknown' : item.completed;
+      // Only include videos confirmed as not watched
+      if (item.completed !== false) continue;
 
       // Duration: content_data.duration is in seconds → convert to minutes
       const durationMinutes = item.content_data?.duration
@@ -97,7 +94,7 @@ export function filterVideos(modules: Module[], course: Course): VideoItem[] {
         itemId: item.module_item_id,
         title: item.title,
         durationMinutes,
-        completed,
+        completed: false,
       });
     }
   }
