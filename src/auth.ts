@@ -19,16 +19,8 @@ export async function login(): Promise<CanvasCookie[]> {
   const page = await context.newPage();
 
   try {
-    // Navigate to LMS — this will redirect to the SSO login page
-    await page.goto('https://lms.ssu.ac.kr', { waitUntil: 'networkidle' });
-
-    // Verify we were redirected to the SSO login page
-    const currentUrl = page.url();
-    if (!currentUrl.includes('lms.ssu.ac.kr/xn-sso/login.php')) {
-      throw new Error(
-        `Expected redirect to SSO login page, but landed on: ${currentUrl}`
-      );
-    }
+    // Navigate directly to the SSO login page
+    await page.goto('https://lms.ssu.ac.kr/xn-sso/login.php', { waitUntil: 'networkidle' });
 
     // Fill in student ID — try common selector variants
     const idSelector = await resolveSelector(page, ['#userid', '#id', 'input[name="userid"]', 'input[name="id"]']);
