@@ -121,7 +121,7 @@ async function main(): Promise<void> {
   console.log('[index] Email sent successfully.');
 }
 
-main().catch((err) => {
+main().then(() => process.exit(0)).catch((err) => {
   console.error('[index] Fatal error:', err);
   process.exit(1);
 });
