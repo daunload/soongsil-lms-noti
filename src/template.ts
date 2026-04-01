@@ -127,16 +127,6 @@ export function buildHtml(items: UncompletedItems, date: Date): string {
     html += `    </ul>\n`;
   }
 
-  // Announcements section
-  if (items.announcements.length > 0) {
-    html += `    <h3>📢 공지 (${items.announcements.length}개, 최근 7일)</h3>\n    <ul>\n`;
-    for (const announcement of items.announcements) {
-      const announcementDate = formatDateTime(announcement.postedAt);
-      html += `      <li>[${announcement.courseName}] ${announcement.title} — ${announcementDate} ${announcement.author}</li>\n`;
-    }
-    html += `    </ul>\n`;
-  }
-
   html += `  </div>\n</body>\n</html>`;
 
   return html;

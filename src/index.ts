@@ -9,14 +9,12 @@ import {
   getQuizzes,
   getQuizSubmission,
   getDiscussionTopics,
-  getAnnouncements,
 } from './api.js';
 import {
   filterAssignments,
   filterVideos,
   filterQuizzes,
   filterDiscussions,
-  filterAnnouncements,
 } from './checker.js';
 import { buildSubject, buildHtml } from './template.js';
 import { sendEmail } from './email.js';
@@ -51,13 +49,12 @@ async function main(): Promise<void> {
       const safe = <T>(p: Promise<T[]>): Promise<T[]> =>
         p.catch((e) => { console.warn(`[api] ${course.shortName}: ${e.message}`); return []; });
 
-      const [assignments, modules, quizzes, discussionTopics, announcements] =
+      const [assignments, modules, quizzes, discussionTopics] =
         await Promise.all([
           safe(getAssignments(cookies, course.id)),
           safe(getModules(cookies, course.id)),
           safe(getQuizzes(cookies, course.id)),
           safe(getDiscussionTopics(cookies, course.id)),
-          safe(getAnnouncements(cookies, course.id)),
         ]);
 
       // Fetch quiz submissions for each quiz
@@ -69,7 +66,7 @@ async function main(): Promise<void> {
       );
       const quizSubmissions = new Map<number, QuizSubmission | null>(quizSubmissionEntries);
 
-      return { course, assignments, modules, quizzes, quizSubmissions, discussionTopics, announcements };
+      return { course, assignments, modules, quizzes, quizSubmissions, discussionTopics };
     }),
   );
 
@@ -83,16 +80,15 @@ async function main(): Promise<void> {
     announcements: [],
   };
 
-  for (const { course, assignments, modules, quizzes, quizSubmissions, discussionTopics, announcements } of courseResults) {
+  for (const { course, assignments, modules, quizzes, quizSubmissions, discussionTopics } of courseResults) {
     aggregated.assignments.push(...filterAssignments(assignments, course));
     aggregated.videos.push(...filterVideos(modules, course));
     aggregated.quizzes.push(...filterQuizzes(quizzes, quizSubmissions, course));
     aggregated.discussions.push(...filterDiscussions(discussionTopics, course));
-    aggregated.announcements.push(...filterAnnouncements(announcements, course));
   }
 
   console.log(
-    `[index] Uncompleted — assignments: ${aggregated.assignments.length}, videos: ${aggregated.videos.length}, quizzes: ${aggregated.quizzes.length}, discussions: ${aggregated.discussions.length}, announcements: ${aggregated.announcements.length}`,
+    `[index] Uncompleted — assignments: ${aggregated.assignments.length}, videos: ${aggregated.videos.length}, quizzes: ${aggregated.quizzes.length}, discussions: ${aggregated.discussions.length}`,
   );
 
   // Step 5: Decide whether to send email based on mode
