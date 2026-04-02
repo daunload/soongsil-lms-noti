@@ -29,9 +29,6 @@ jobs:
         env:
           SSU_ID: ${{ secrets.SSU_ID }}
           SSU_PW: ${{ secrets.SSU_PW }}
-          MAILSERVICE: ${{ secrets.MAILSERVICE }}
-          HOSTMAIL: ${{ secrets.HOSTMAIL }}
-          MAILPORT: ${{ secrets.MAILPORT }}
           AUTHUSER: ${{ secrets.AUTHUSER }}
           AUTHPASS: ${{ secrets.AUTHPASS }}
           NOTIFY_EMAIL: ${{ secrets.NOTIFY_EMAIL }}
